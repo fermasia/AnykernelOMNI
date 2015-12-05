@@ -1,0 +1,48 @@
+#!/system/bin/sh
+#
+# Anykernel Tuning
+# @fermasia
+#
+
+# initialize kernel
+echo "[Donkey One Kernel] initialize boot script" | tee /dev/kmsg
+
+# disable debugging on some modules
+echo "0" > /sys/module/kernel/parameters/initcall_debug;
+echo "0" > /sys/module/alarm/parameters/debug_mask;
+echo "0" > /sys/module/alarm_dev/parameters/debug_mask;
+echo "0" > /sys/module/binder/parameters/debug_mask;
+echo "0" > /sys/module/xt_qtaguid/parameters/debug_mask;
+echo "[Donkey One Kernel] disable debug mask" | tee /dev/kmsg
+
+# disable/enable CPU Quiet driver by default
+echo "1" > /sys/devices/system/cpu/cpuquiet/cpuquiet_driver/enabled;
+
+# disable/enable Bricked Hotplug driver by default
+echo "0" > /sys/kernel/msm_mpdecision/conf/enabled;
+
+# set default CPU Governor
+defaultgov="smartmax"
+echo "$defaultgov" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+echo "$defaultgov" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+echo "$defaultgov" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+echo "$defaultgov" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+
+# set min/max freqs after boot
+minfreq="146400"
+echo "$minfreq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+echo "$minfreq" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
+echo "$minfreq" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq
+echo "$minfreq" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq
+
+maxfreq="2457600"
+echo "$maxfreq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+echo "$maxfreq" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
+echo "$maxfreq" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
+echo "$maxfreq" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+echo "[donkey kernel] set min-max freqs after boot" | tee /dev/kmsg
+
+# Facebook FC Temp Workaround
+rm /data/app/com.facebook.katana-1/lib/arm/libliger.so
+rm /data/app/com.facebook.katana-2/lib/arm/libliger.so
+
